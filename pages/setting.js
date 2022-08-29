@@ -1,12 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import axiosInstance from "../utils/axiosInstance";
 
 const Setting = () => {
-  const googleLink = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL}?method=MEET&access_type=offline&prompt=consent&scope=https://www.googleapis.com/auth/calendar`;
-
+  const router = useRouter();
+  const googleLink = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL}&access_type=offline&prompt=consent&scope=https://www.googleapis.com/auth/calendar`;
+  const [googleConnectSuccess, setGoogleConnectSuccess] = useState(false);
+  useEffect(() => {
+    const handleGoogleMeet = async () => {
+      if (router.query.error) {
+        console.log("not connectted with google meet Please try again!!");
+        router.push(`/setting`);
+        return;
+      }
+      if (router.query.code) {
+        const res = await axiosInstance.post(`/connect-google-meet`, {
+          code: router.query.code,
+        });
+        if (res.data.status === "success") {
+          console.log("succesfully connectted");
+          setGoogleConnectSuccess(true);
+          router.push(`/setting`);
+        } else {
+          console.log("Failed to connect to Google");
+        }
+      }
+    };
+    if (router.query.code || router.query.error) {
+      handleGoogleMeet();
+    }
+  }, [router]);
   return (
     <div>
       <div>
-        <button onClick={handleGoogleMeet}>Google meet connecting</button>
+        <button onClick={() => router.push(googleLink)}>
+          {googleConnectSuccess
+            ? "Connected with Google"
+            : "Connect with Google Meet"}
+        </button>
       </div>
     </div>
   );

@@ -6,12 +6,31 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:server": "nodemon ./backend/server.js",
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.5",
+    "@mui/material": "^5.0.5",
+    "@mui/styles": "^5.0.2",
+    "@mui/x-date-pickers": "^5.0.0-beta.0",
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "googleapis": "^107.0.0",
+    "moment": "^2.29.4",
+    "mongoose": "^6.5.3",
     "next": "12.2.5",
+    "nodejs-base64": "^2.0.0",
+    "nodemon": "^2.0.19",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "request": "^2.88.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "eslint": "8.22.0",
