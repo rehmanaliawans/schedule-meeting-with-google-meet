@@ -9,7 +9,6 @@ const Setting = () => {
   useEffect(() => {
     const handleGoogleMeet = async () => {
       if (router.query.error) {
-        console.log("not connectted with google meet Please try again!!");
         router.push(`/setting`);
         return;
       }
@@ -18,11 +17,8 @@ const Setting = () => {
           code: router.query.code,
         });
         if (res.data.status === "success") {
-          console.log("succesfully connectted");
           setGoogleConnectSuccess(true);
           router.push(`/setting`);
-        } else {
-          console.log("Failed to connect to Google");
         }
       }
     };

@@ -25,23 +25,20 @@ export default function Home() {
         setGoogleToken("");
       });
   }, []);
-
   const handleScheduleMeeting = () => {
     //format the time
 
     const data = {
-      interviewTime: moment.utc(selectedTime).format(),
+      meetingTime: moment.utc(selectedTime).format(),
       duration: 10,
       google_token: googleToken,
       email: email,
     };
-    console.log("finale", data);
     axiosInstance
-      .post(`/post-interview`, data)
+      .post(`/post-meeting`, data)
       .then((res) => {
-        console.log("interview scheduled", res.data);
         if (res.data.status === "success") {
-          setMessage("Interview Scheduled Successfully");
+          setMessage("Meeting Scheduled Successfully");
         }
         if (res.data.status === "warning") {
           setMessage(res.data.message);
@@ -76,7 +73,7 @@ export default function Home() {
         </div>
 
         <div style={{ padding: "20px" }}>
-          {googleToken !== "" ? (
+          {googleToken === "" ? (
             <Button onClick={() => router.push("/setting")} type="submit">
               Connect with Google
             </Button>

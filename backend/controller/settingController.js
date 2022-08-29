@@ -17,7 +17,7 @@ exports.connectGoogleMeet = async (req, res, next) => {
       const data = {
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: `${process.env.GOOGLE_REDIRECT_URL}?method=MEET`,
+        redirect_uri: `${process.env.GOOGLE_REDIRECT_URL}`,
       };
 
       const options = {
@@ -140,17 +140,16 @@ const createCalendar = (token) => {
 
   return calendar;
 };
-exports.postInterview = async (req, res, next) => {
-  const interviewInfo = req.body;
-  console.log("interview info", interviewInfo);
+exports.postMeeting = async (req, res, next) => {
+  const meetingInfo = req.body;
   //create a calender
-  const calendar = createCalendar(interviewInfo.google_token);
+  const calendar = createCalendar(meetingInfo.google_token);
 
   // Create a new event start date instance for temp uses in our calendar.
-  const eventStartTime = interviewInfo.interviewTime;
+  const eventStartTime = meetingInfo.meetingTime;
 
-  const eventEndTime = moment(interviewInfo.interviewTime)
-    .add(interviewInfo.duration, "minutes")
+  const eventEndTime = moment(meetingInfo.meetingTime)
+    .add(meetingInfo.duration, "minutes")
     .format();
 
   let event = {
@@ -164,7 +163,7 @@ exports.postInterview = async (req, res, next) => {
     end: {
       dateTime: eventEndTime,
     },
-    attendees: [{ email: interviewInfo.email }],
+    attendees: [{ email: meetingInfo.email }],
     sendUpdates: true,
     conferenceData: {
       createRequest: {
@@ -187,7 +186,8 @@ exports.postInterview = async (req, res, next) => {
     (err, googleResponse) => {
       // Check for errors in our query and log them if they exist.
       if (err) {
-        return next(new AppError(err, 404));
+        console.log("err", err);
+        return err;
       }
 
       // Create an array of all events on our calendar during that time.
@@ -205,9 +205,11 @@ exports.postInterview = async (req, res, next) => {
           },
           async (err, event) => {
             // Check for errors and log them if they exist.
-            if (err) return next(new AppError(err, 404));
-
-            //return the newly created intrview to client side
+            if (err) {
+              console.log("err", err);
+              return err;
+            }
+            //return the newly created meeting to client side
             return res.json({
               status: "success",
             });
@@ -216,7 +218,7 @@ exports.postInterview = async (req, res, next) => {
 
       return res.json({
         status: "warning",
-        message: "Interview is already schedule for this time",
+        message: "Meeting already scheduled on that time",
       });
     },
   );
